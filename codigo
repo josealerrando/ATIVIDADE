@@ -1,0 +1,70 @@
+import os
+
+while True:
+    print("="*38)
+    print("GERENCIADOR DE TEXTOS")
+    print("="*38)
+    print("[1] Criar Arquivo")
+    print("[2] Editar Arquivo")
+    print("[3] Ler Arquivo")
+    print("[4] Deletar Arquivo")
+    print("[5] Sair")
+    
+    opcao = input("Escolha: ")
+
+    # ✅ Validação imediata
+    if opcao not in ['1', '2', '3', '4', '5']:
+        print("Opção inválida.")
+        continue
+
+    if opcao == '5':
+        print("Saindo...")
+        break
+
+    nome = input("Escolha o nome do arquivo: ")
+    if not nome.endswith(".txt"):
+        nome += ".txt"
+
+    # Criar
+    if opcao == '1':
+        if os.path.exists(nome):
+            print("Arquivo já existente.")
+        else:
+            with open(nome, "w", encoding="utf-8") as f:
+                pass
+            print("Arquivo criado!")
+
+    # Escrever
+    elif opcao == '2':
+        if not os.path.exists(nome):
+            print("Arquivo não encontrado.")
+        else:
+            with open(nome, "a", encoding="utf-8") as f:
+                texto = input("Digite o texto: ")
+                f.write(texto + "\n")
+            print("Texto salvo.")
+
+    # Ler
+    elif opcao == '3':
+        if not os.path.exists(nome):
+            print("Arquivo não encontrado.")
+        else:
+            with open(nome, "r", encoding="utf-8") as f:
+                conteudo = f.read()
+                if conteudo == "":
+                    print("Arquivo vazio.")
+                else:
+                    print("\nConteúdo:")
+                    print(conteudo)
+
+    # Deletar
+    elif opcao == '4':
+        if not os.path.exists(nome):
+            print("Arquivo não encontrado.")
+        else:
+            confirmacao = input("Tem certeza? (s/n): ")
+            if confirmacao.lower() == 's':
+                os.remove(nome)
+                print("Arquivo deletado.")
+            else:
+                print("Cancelado")
