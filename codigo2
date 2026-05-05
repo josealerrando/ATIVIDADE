@@ -1,0 +1,146 @@
+import os
+
+# ---------------- INICIALIZAR ----------------
+
+def inicializar():
+    for pasta in ["alunos", "professores"]:
+        os.makedirs(pasta, exist_ok=True)
+
+    open("alunos/alunos.txt", "a").close()
+    open("professores/professores.txt", "a").close()
+
+# ---------------- GERADORES ----------------
+
+def gerar_id(caminho):
+    with open(caminho, "r") as f:
+        ids = [int(linha.split("|")[0]) for linha in f if linha.strip()]
+        return max(ids) + 1 if ids else 1
+
+def gerar_matricula():
+    caminho = "alunos/alunos.txt"
+    with open(caminho, "r") as f:
+        mats = [int(linha.split("|")[3]) for linha in f if linha.strip()]
+        novo = max(mats) + 1 if mats else 1
+        return f"{novo:04d}"
+
+# ---------------- FUNÇÕES GENÉRICAS ----------------
+
+def listar(caminho, cabecalho):
+    print("\n=== LISTA ===")
+    print(cabecalho)
+    print("-" * 50)
+
+    with open(caminho, "r") as f:
+        for linha in f:
+            print(linha.strip().replace("|", " | "))
+
+def excluir(caminho, tipo):
+    id_busca = input(f"ID do {tipo}: ")
+    linhas = []
+    achou = False
+
+    with open(caminho, "r") as f:
+        for linha in f:
+            if linha.split("|")[0] == id_busca:
+                achou = True
+            else:
+                linhas.append(linha)
+
+    with open(caminho, "w") as f:
+        f.writelines(linhas)
+
+    print(">>> Excluído!" if achou else ">>> ID não encontrado")
+
+# ---------------- ALUNOS ----------------
+
+def cadastrar_aluno():
+    print("\n=== CADASTRAR ALUNO ===")
+
+    id_ = gerar_id("alunos/alunos.txt")
+    matricula = gerar_matricula()
+
+    nome = input("Nome: ")
+    turma = input("Turma: ")
+
+    with open("alunos/alunos.txt", "a") as f:
+        f.write(f"{id_}|{nome}|{turma}|{matricula}\n")
+
+    print(">>> Aluno cadastrado!")
+
+# ---------------- PROFESSORES ----------------
+
+def cadastrar_professor():
+    print("\n=== CADASTRAR PROFESSOR ===")
+
+    id_ = gerar_id("professores/professores.txt")
+
+    nome = input("Nome: ")
+    area = input("Área: ")
+
+    with open("professores/professores.txt", "a") as f:
+        f.write(f"{id_}|{nome}|{area}\n")
+
+    print(">>> Professor cadastrado!")
+
+# ---------------- MENUS ----------------
+
+def menu_alunos():
+    while True:
+        print("\n=== MENU ALUNOS ===")
+        print("1 - Cadastrar")
+        print("2 - Listar")
+        print("3 - Excluir")
+        print("0 - Voltar")
+
+        op = input("Opção: ")
+
+        if op == "1":
+            cadastrar_aluno()
+        elif op == "2":
+            listar("alunos/alunos.txt", "ID | NOME | TURMA | MATRÍCULA")
+        elif op == "3":
+            excluir("alunos/alunos.txt", "aluno")
+        elif op == "0":
+            break
+
+def menu_professores():
+    while True:
+        print("\n=== MENU PROFESSORES ===")
+        print("1 - Cadastrar")
+        print("2 - Listar")
+        print("3 - Excluir")
+        print("0 - Voltar")
+
+        op = input("Opção: ")
+
+        if op == "1":
+            cadastrar_professor()
+        elif op == "2":
+            listar("professores/professores.txt", "ID | NOME | ÁREA")
+        elif op == "3":
+            excluir("professores/professores.txt", "professor")
+        elif op == "0":
+            break
+
+# ---------------- MAIN ----------------
+
+def main():
+    inicializar()
+
+    while True:
+        print("\n=== SISTEMA ESCOLAR ===")
+        print("1 - Alunos")
+        print("2 - Professores")
+        print("0 - Sair")
+
+        op = input("Opção: ")
+
+        if op == "1":
+            menu_alunos()
+        elif op == "2":
+            menu_professores()
+        elif op == "0":
+            print("Saindo...")
+            break
+
+main()
